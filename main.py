@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         self.resize(600, 300)  # Wider to accommodate new columns
         
         # Connect error signal to status bar
-        self.model.error_occurred.connect(self.statusBar().showMessage)
+        self.model.status_message.connect(self.statusBar().showMessage)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

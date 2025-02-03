@@ -1,8 +1,9 @@
 from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from financial_product import FinancialProduct
+from datetime import datetime  # Add datetime import
 
 class FinancialProductModel(QAbstractTableModel):
-    error_occurred = pyqtSignal(str)  # Add signal for error reporting
+    status_message = pyqtSignal(str)  # Renamed signal
 
     def __init__(self, product: FinancialProduct, parent=None):
         super().__init__(parent)
@@ -63,12 +64,20 @@ class FinancialProductModel(QAbstractTableModel):
             setattr(self.product, key.lower(), converted_value)
             self.attributes = self.product.attributes
             self.dataChanged.emit(index, index, [role])
+            # Show success message
+            self.status_message.emit(
+                f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Successfully updated {key} to {converted_value}"
+            )
             return True
         except (ValueError, TypeError) as e:
-            self.error_occurred.emit(f"Validation error: {str(e)}")  # Emit error signal
+            self.status_message.emit(
+                f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Validation error: {str(e)}"
+            )
             return False
         except Exception as e:
-            self.error_occurred.emit(f"Unexpected error: {str(e)}")
+            self.status_message.emit(
+                f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Unexpected error: {str(e)}"
+            )
             return False
 
     def refresh_model(self):

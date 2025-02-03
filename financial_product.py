@@ -27,14 +27,9 @@ class FinancialProduct:
             raise ValueError("Quantity cannot be negative")
         self._quantity = int(value)
 
-    def to_dict(self) -> dict:
-        """Return a dictionary representation using display_attributes metadata."""
-        return {k: v[0] for k, v in self.display_attributes.items()}
-
     @property
-    def display_attributes(self):
-        """Return attribute metadata in format {DisplayName: (current_value, type, default)}"""
-        # This is computed fresh each time - changes to the dict won't affect instance variables
+    def attributes(self):
+        """Return attribute metadata in format {DisplayName: (value, type, default)}"""
         return {
             "Name": (self.name, str, ""),
             "Price": (self.price, float, 0.0),

@@ -5,16 +5,15 @@ class FinancialProductModel(QAbstractTableModel):
     def __init__(self, product: FinancialProduct, parent=None):
         super().__init__(parent)
         self.product = product
-        # Get a dictionary of attributes and store the keys for ordering.
-        self.data_dict = self.product.to_dict()
-        self.keys = list(self.data_dict.keys())
+        self.attributes = self.product.attributes
+        self.keys = list(self.attributes.keys())
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.keys)
 
     def columnCount(self, parent=QModelIndex()):
-        # We have two columns: Attribute name and value.
-        return 2
+        # Now four columns: Attribute, Value, Type, Default
+        return 4
 
     def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
@@ -22,12 +21,17 @@ class FinancialProductModel(QAbstractTableModel):
 
         key = self.keys[index.row()]
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
-            if index.column() == 0:
-                # First column shows the attribute name.
+            col = index.column()
+            attr_data = self.attributes[key]
+            
+            if col == 0:  # Attribute name
                 return key
-            elif index.column() == 1:
-                # Second column shows the attribute's value.
-                return str(self.data_dict[key])
+            elif col == 1:  # Current value
+                return str(attr_data[0])
+            elif col == 2:  # Value type
+                return attr_data[1].__name__
+            elif col == 3:  # Default value
+                return str(attr_data[2])
         return None
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
@@ -35,54 +39,37 @@ class FinancialProductModel(QAbstractTableModel):
             return None
 
         if orientation == Qt.Orientation.Horizontal:
-            if section == 0:
-                return "Attribute"
-            elif section == 1:
-                return "Value"
+            headers = ["Attribute", "Value", "Type", "Default"]
+            return headers[section] if section < len(headers) else None
         return None
 
     def flags(self, index):
-        if not index.isValid():
-            return Qt.ItemFlag.ItemIsEnabled
-        # Make the value column editable
+        flags = super().flags(index)
         if index.column() == 1:
-            return (Qt.ItemFlag.ItemIsEditable |
-                    Qt.ItemFlag.ItemIsEnabled |
-                    Qt.ItemFlag.ItemIsSelectable)
-        return Qt.ItemFlag.ItemIsEnabled
+            return flags | Qt.ItemFlag.ItemIsEditable
+        return flags & ~Qt.ItemFlag.ItemIsEditable
 
     def setData(self, index, value, role=Qt.ItemDataRole.EditRole):
-        if not index.isValid() or role != Qt.ItemDataRole.EditRole:
+        if index.column() != 1 or not index.isValid() or role != Qt.ItemDataRole.EditRole:
             return False
 
         key = self.keys[index.row()]
-        
-        # Updated to handle (value, type, default) tuple
-        try:
-            _, expected_type, _ = self.product.display_attributes[key]
-        except KeyError:
-            return False
-
-        # Perform type conversion based on product metadata
-        try:
-            if expected_type is bool:
-                # Handle checkbox-like conversions
-                value = str(value).lower() in ('true', '1', 'yes')
-            else:
-                value = expected_type(value)
-        except (ValueError, TypeError):
-            return False
+        _, expected_type, default = self.attributes[key]
 
         try:
-            setattr(self.product, key.lower(), value)
-        except (TypeError, ValueError) as e:
-            # Handle validation errors
+            # Convert input value to correct type
+            converted_value = expected_type(value)
+            
+            # Use property setters for validation
+            setattr(self.product, key.lower(), converted_value)
+            
+            # Refresh the attributes data
+            self.attributes = self.product.attributes
+            self.dataChanged.emit(index, index, [role])
+            return True
+        except (ValueError, TypeError) as e:
             return False
-
-        self.data_dict[key] = value
-        self.dataChanged.emit(index, index, [role])
-        return True
 
     def refresh_model(self):
-        self.data_dict = self.product.to_dict()
+        self.attributes = self.product.attributes
         self.layoutChanged.emit()

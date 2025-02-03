@@ -52,6 +52,10 @@ class FinancialProductModel(QAbstractTableModel):
             return flags | Qt.ItemFlag.ItemIsEditable
         return flags & ~Qt.ItemFlag.ItemIsEditable
 
+    def _get_timestamp(self):
+        """Helper method to format current timestamp"""
+        return f"[{datetime.now().strftime('%H:%M:%S')}]"
+
     def setData(self, index, value, role=Qt.ItemDataRole.EditRole):
         if index.column() != 1 or not index.isValid() or role != Qt.ItemDataRole.EditRole:
             return False
@@ -64,19 +68,18 @@ class FinancialProductModel(QAbstractTableModel):
             setattr(self.product, key.lower(), converted_value)
             self.attributes = self.product.attributes
             self.dataChanged.emit(index, index, [role])
-            # Show success message
             self.status_message.emit(
-                f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Successfully updated {key} to {converted_value}"
+                f"{self._get_timestamp()} ✓ Successfully updated {key} to {converted_value}"
             )
             return True
         except (ValueError, TypeError) as e:
             self.status_message.emit(
-                f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Validation error: {str(e)}"
+                f"{self._get_timestamp()} ✗ Validation error: {str(e)}"
             )
             return False
         except Exception as e:
             self.status_message.emit(
-                f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Unexpected error: {str(e)}"
+                f"{self._get_timestamp()} ✗ Unexpected error: {str(e)}"
             )
             return False
 

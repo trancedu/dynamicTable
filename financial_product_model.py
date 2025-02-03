@@ -65,13 +65,15 @@ class FinancialProductModel(QAbstractTableModel):
             return False
 
         key = self.keys[index.row()]
-        _, expected_type, default = self.attributes[key]
+        attr_data = self.attributes[key]
+        _, expected_type, default, setter = attr_data
+
+        if not setter:
+            return False  # Read-only field
 
         try:
             converted_value = expected_type(value)
-            # Handle attribute names with spaces
-            attr_name = key.lower().replace(' ', '_')
-            setattr(self.product, attr_name, converted_value)
+            setter(converted_value)  # Use the explicit setter method
             self.attributes = self.product.attributes
             
             # Emit change for edited cell

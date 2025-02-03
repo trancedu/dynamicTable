@@ -69,7 +69,9 @@ class FinancialProductModel(QAbstractTableModel):
 
         try:
             converted_value = expected_type(value)
-            setattr(self.product, key.lower(), converted_value)
+            # Handle attribute names with spaces
+            attr_name = key.lower().replace(' ', '_')
+            setattr(self.product, attr_name, converted_value)
             self.attributes = self.product.attributes
             
             # Emit change for edited cell

@@ -1,12 +1,15 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QTableView, QMainWindow
-from financial_product import FinancialProduct
+from financial_product import FinancialProduct, Option, Swap
 from financial_product_model import FinancialProductModel
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.product = FinancialProduct("Bond", 100.0, 1000, "Corporate bond")
+        self.product = Option(
+            "Put Option", 50.0, 100, "Equity option", 
+            _strike_price=120.0, _expiration="2024-12-31", _volatility=0.3
+        )
         self.model = FinancialProductModel(self.product)
         
         # Setup UI

@@ -34,5 +34,6 @@ class FinancialProduct:
             "Name": (self.name, str, ""),
             "Price": (self.price, float, 0.0),
             "Quantity": (self.quantity, int, 0),
-            "Description": (self.description, str, "")
+            "Description": (self.description, str, ""),
+            "Total": (self.price * self.quantity, float, 0.0)
         }

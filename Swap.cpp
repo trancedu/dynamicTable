@@ -35,7 +35,7 @@ QHash<QString, QVariantList> Swap::attributes() const {
     
     base.insert("Fixed Rate", QVariantList{
         m_fixedRate,
-        QVariant::fromValue(QMetaType(QMetaType::Double)),
+        QVariant::fromValue(QMetaType::Double),
         0.0,
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
             const_cast<Swap*>(this)->setFixedRate(v.toDouble());
@@ -44,7 +44,7 @@ QHash<QString, QVariantList> Swap::attributes() const {
     
     base.insert("Notional", QVariantList{
         m_notional,
-        QVariant::fromValue(QMetaType(QMetaType::Double)),
+        QVariant::fromValue(QMetaType::Double),
         0.0,
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
             const_cast<Swap*>(this)->setNotional(v.toDouble());

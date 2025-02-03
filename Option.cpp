@@ -45,7 +45,7 @@ QHash<QString, QVariantList> Option::attributes() const {
     
     base.insert("Strike Price", QVariantList{
         m_strikePrice,
-        QVariant::fromValue(QMetaType(QMetaType::Double)),
+        QVariant::fromValue(QMetaType::Double),
         0.0,
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
             const_cast<Option*>(this)->setStrikePrice(v.toDouble());
@@ -54,7 +54,7 @@ QHash<QString, QVariantList> Option::attributes() const {
     
     base.insert("Expiration", QVariantList{
         m_expiration,
-        QVariant::fromValue(QMetaType(QMetaType::QString)),
+        QVariant::fromValue(QMetaType::QString),
         "",
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
             const_cast<Option*>(this)->setExpiration(v.toString());
@@ -63,7 +63,7 @@ QHash<QString, QVariantList> Option::attributes() const {
     
     base.insert("Volatility", QVariantList{
         m_volatility,
-        QVariant::fromValue(QMetaType(QMetaType::Double)),
+        QVariant::fromValue(QMetaType::Double),
         0.2,
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
             const_cast<Option*>(this)->setVolatility(v.toDouble());

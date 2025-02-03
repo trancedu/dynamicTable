@@ -51,7 +51,7 @@ QHash<QString, QVariantList> FinancialProduct::attributes() const {
     
     attrs.insert("Name", QVariantList{
         m_name,
-        QVariant::fromValue(QMetaType(QMetaType::QString)),
+        QVariant::fromValue(QMetaType::QString),
         "",
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
             const_cast<FinancialProduct*>(this)->setName(v.toString()); 
@@ -60,7 +60,7 @@ QHash<QString, QVariantList> FinancialProduct::attributes() const {
     
     attrs.insert("Price", QVariantList{
         m_price,
-        QVariant::fromValue(QMetaType(QMetaType::Double)),
+        QVariant::fromValue(QMetaType::Double),
         0.0,
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
             const_cast<FinancialProduct*>(this)->setPrice(v.toDouble()); 
@@ -69,7 +69,7 @@ QHash<QString, QVariantList> FinancialProduct::attributes() const {
     
     attrs.insert("Quantity", QVariantList{
         m_quantity,
-        QVariant::fromValue(QMetaType(QMetaType::Int)),
+        QVariant::fromValue(QMetaType::Int),
         0,
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
             const_cast<FinancialProduct*>(this)->setQuantity(v.toInt()); 
@@ -78,7 +78,7 @@ QHash<QString, QVariantList> FinancialProduct::attributes() const {
     
     attrs.insert("Description", QVariantList{
         m_description,
-        QVariant::fromValue(QMetaType(QMetaType::QString)),
+        QVariant::fromValue(QMetaType::QString),
         "",
         QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
             const_cast<FinancialProduct*>(this)->setDescription(v.toString()); 
@@ -87,7 +87,7 @@ QHash<QString, QVariantList> FinancialProduct::attributes() const {
     
     attrs.insert("Total", QVariantList{
         total(),
-        QVariant::fromValue(QMetaType(QMetaType::Double)),
+        QVariant::fromValue(QMetaType::Double),
         0.0,
         QVariant::fromValue(std::function<void(QVariant)>())  // Empty function
     });

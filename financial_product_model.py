@@ -56,10 +56,28 @@ class FinancialProductModel(QAbstractTableModel):
             return False
 
         key = self.keys[index.row()]
-        # Optionally, add type conversion or validation here.
+        
+        # Get type information from the product's display_attributes
+        try:
+            _, expected_type = self.product.display_attributes[key]
+        except KeyError:
+            return False
+
+        # Perform type conversion based on product metadata
+        try:
+            if expected_type is bool:
+                # Handle checkbox-like conversions
+                value = str(value).lower() in ('true', '1', 'yes')
+            else:
+                value = expected_type(value)
+        except (ValueError, TypeError):
+            return False
+
         self.data_dict[key] = value
-        # Also update the underlying product. Here we assume attribute names
-        # in the product are lowercase (or you can map them as needed).
         setattr(self.product, key.lower(), value)
         self.dataChanged.emit(index, index, [role])
         return True
+
+    def refresh_model(self):
+        self.data_dict = self.product.to_dict()
+        self.layoutChanged.emit()

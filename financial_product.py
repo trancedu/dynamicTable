@@ -19,3 +19,13 @@ class FinancialProduct:
         for key, value in data.items():
             # Here you might want to add type checking/conversion
             setattr(self, key.lower(), value)
+
+    @property
+    def display_attributes(self):
+        """Return attribute metadata in format {DisplayName: (value, type)}"""
+        return {
+            "Name": (self.name, str),
+            "Price": (self.price, float),
+            "Quantity": (self.quantity, int),
+            "Description": (self.description, str)
+        }

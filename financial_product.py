@@ -1,9 +1,31 @@
+from dataclasses import dataclass
+
+@dataclass
 class FinancialProduct:
-    def __init__(self, name: str, price: float, quantity: int, description: str):
-        self.name = name
-        self.price = price
-        self.quantity = quantity
-        self.description = description
+    name: str
+    _price: float
+    _quantity: int
+    description: str
+
+    @property
+    def price(self) -> float:
+        return self._price
+
+    @price.setter
+    def price(self, value: float):
+        if value < 0:
+            raise ValueError("Price cannot be negative")
+        self._price = float(value)
+
+    @property
+    def quantity(self) -> int:
+        return self._quantity
+
+    @quantity.setter
+    def quantity(self, value: int):
+        if value < 0:
+            raise ValueError("Quantity cannot be negative")
+        self._quantity = int(value)
 
     def to_dict(self) -> dict:
         """Return a dictionary representation of the product."""

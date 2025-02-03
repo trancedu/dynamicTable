@@ -73,8 +73,13 @@ class FinancialProductModel(QAbstractTableModel):
         except (ValueError, TypeError):
             return False
 
+        try:
+            setattr(self.product, key.lower(), value)
+        except (TypeError, ValueError) as e:
+            # Handle validation errors
+            return False
+
         self.data_dict[key] = value
-        setattr(self.product, key.lower(), value)
         self.dataChanged.emit(index, index, [role])
         return True
 

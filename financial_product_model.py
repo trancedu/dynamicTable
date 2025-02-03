@@ -57,9 +57,9 @@ class FinancialProductModel(QAbstractTableModel):
 
         key = self.keys[index.row()]
         
-        # Get type information from the product's display_attributes
+        # Updated to handle (value, type, default) tuple
         try:
-            _, expected_type = self.product.display_attributes[key]
+            _, expected_type, _ = self.product.display_attributes[key]
         except KeyError:
             return False
 

@@ -28,26 +28,16 @@ class FinancialProduct:
         self._quantity = int(value)
 
     def to_dict(self) -> dict:
-        """Return a dictionary representation of the product."""
-        return {
-            "Name": self.name,
-            "Price": self.price,
-            "Quantity": self.quantity,
-            "Description": self.description,
-        }
-
-    def update_from_dict(self, data: dict) -> None:
-        """Update the product attributes from a dictionary."""
-        for key, value in data.items():
-            # Here you might want to add type checking/conversion
-            setattr(self, key.lower(), value)
+        """Return a dictionary representation using display_attributes metadata."""
+        return {k: v[0] for k, v in self.display_attributes.items()}
 
     @property
     def display_attributes(self):
-        """Return attribute metadata in format {DisplayName: (value, type)}"""
+        """Return attribute metadata in format {DisplayName: (current_value, type, default)}"""
+        # This is computed fresh each time - changes to the dict won't affect instance variables
         return {
-            "Name": (self.name, str),
-            "Price": (self.price, float),
-            "Quantity": (self.quantity, int),
-            "Description": (self.description, str)
+            "Name": (self.name, str, ""),
+            "Price": (self.price, float, 0.0),
+            "Quantity": (self.quantity, int, 0),
+            "Description": (self.description, str, "")
         }

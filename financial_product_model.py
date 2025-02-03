@@ -72,12 +72,16 @@ class FinancialProductModel(QAbstractTableModel):
             setattr(self.product, key.lower(), converted_value)
             self.attributes = self.product.attributes
             
+            # Emit change for edited cell
             self.dataChanged.emit(index, index, [role])
             
-            total_row = self.keys.index("Total")
-            total_index = self.index(total_row, 1)
-            self.dataChanged.emit(total_index, total_index, [role])
-            
+            # Handle dependent fields
+            changed_field = key
+            for dependent in self.product.attribute_dependencies.get(changed_field, []):
+                dep_row = self.keys.index(dependent)
+                dep_index = self.index(dep_row, 1)
+                self.dataChanged.emit(dep_index, dep_index, [role])
+
             self.status_message.emit(
                 f"{self._get_timestamp()} ✓ Successfully updated {key} to {converted_value}"
             )

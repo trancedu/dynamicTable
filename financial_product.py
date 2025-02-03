@@ -37,3 +37,11 @@ class FinancialProduct:
             "Description": (self.description, str, ""),
             "Total": (self.price * self.quantity, float, 0.0)
         }
+
+    @property
+    def dependencies(self):
+        """Return attribute dependencies {field: [dependent_fields]}"""
+        return {
+            "price": ["total"],
+            "quantity": ["total"]
+        }

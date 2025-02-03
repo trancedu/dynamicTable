@@ -72,15 +72,12 @@ class FinancialProductModel(QAbstractTableModel):
             setattr(self.product, key.lower(), converted_value)
             self.attributes = self.product.attributes
             
-            # Emit data change for current field
             self.dataChanged.emit(index, index, [role])
             
-            # If Price or Quantity changed, also update Total
-            if key in ("Price", "Quantity"):
-                total_row = self.keys.index("Total")
-                total_index = self.index(total_row, 1)
-                self.dataChanged.emit(total_index, total_index, [role])
-
+            total_row = self.keys.index("Total")
+            total_index = self.index(total_row, 1)
+            self.dataChanged.emit(total_index, total_index, [role])
+            
             self.status_message.emit(
                 f"{self._get_timestamp()} ✓ Successfully updated {key} to {converted_value}"
             )

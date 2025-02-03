@@ -73,7 +73,7 @@ class FinancialProductModel(QAbstractTableModel):
 
         try:
             converted_value = expected_type(value)
-            setter(converted_value)  # Use the explicit setter method
+            setter(self.product, converted_value)  # Pass both instance and value
             self.attributes = self.product.attributes
             
             # Emit change for edited cell

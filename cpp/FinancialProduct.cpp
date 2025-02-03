@@ -49,47 +49,34 @@ void FinancialProduct::setDescription(const QString& description) {
 QHash<QString, QVariantList> FinancialProduct::attributes() const {
     QHash<QString, QVariantList> attrs;
     
-    attrs.insert("Name", QVariantList{
+    attrs.insert("name", QVariantList{
         m_name,
         QVariant::fromValue(QMetaType::QString),
-        "",
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
-            const_cast<FinancialProduct*>(this)->setName(v.toString()); 
-        }))
+        ""
     });
     
-    attrs.insert("Price", QVariantList{
+    attrs.insert("price", QVariantList{
         m_price,
         QVariant::fromValue(QMetaType::Double),
-        0.0,
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
-            const_cast<FinancialProduct*>(this)->setPrice(v.toDouble()); 
-        }))
+        0.0
     });
     
-    attrs.insert("Quantity", QVariantList{
+    attrs.insert("quantity", QVariantList{
         m_quantity,
         QVariant::fromValue(QMetaType::Int),
-        0,
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
-            const_cast<FinancialProduct*>(this)->setQuantity(v.toInt()); 
-        }))
+        0
     });
     
-    attrs.insert("Description", QVariantList{
+    attrs.insert("description", QVariantList{
         m_description,
         QVariant::fromValue(QMetaType::QString),
-        "",
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable { 
-            const_cast<FinancialProduct*>(this)->setDescription(v.toString()); 
-        }))
+        ""
     });
     
     attrs.insert("Total", QVariantList{
         total(),
         QVariant::fromValue(QMetaType::Double),
-        0.0,
-        QVariant::fromValue(std::function<void(QVariant)>())  // Empty function
+        0.0
     });
     
     return attrs;

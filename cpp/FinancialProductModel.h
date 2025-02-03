@@ -29,7 +29,6 @@ private:
         QVariant value;
         int type;  // Store QMetaType ID as int
         QVariant defaultValue;
-        std::function<void(QVariant)> setter;
     };
 
     FinancialProduct* m_product;

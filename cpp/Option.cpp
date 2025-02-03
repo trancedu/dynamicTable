@@ -43,31 +43,22 @@ void Option::setVolatility(double volatility) {
 QHash<QString, QVariantList> Option::attributes() const {
     auto base = FinancialProduct::attributes();
     
-    base.insert("Strike Price", QVariantList{
+    base.insert("strikePrice", QVariantList{
         m_strikePrice,
         QVariant::fromValue(QMetaType::Double),
-        0.0,
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
-            const_cast<Option*>(this)->setStrikePrice(v.toDouble());
-        }))
+        0.0
     });
     
-    base.insert("Expiration", QVariantList{
+    base.insert("expiration", QVariantList{
         m_expiration,
         QVariant::fromValue(QMetaType::QString),
-        "",
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
-            const_cast<Option*>(this)->setExpiration(v.toString());
-        }))
+        ""
     });
     
-    base.insert("Volatility", QVariantList{
+    base.insert("volatility", QVariantList{
         m_volatility,
         QVariant::fromValue(QMetaType::Double),
-        0.2,
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
-            const_cast<Option*>(this)->setVolatility(v.toDouble());
-        }))
+        0.2
     });
     
     return base;
@@ -75,7 +66,7 @@ QHash<QString, QVariantList> Option::attributes() const {
 
 QHash<QString, QVector<QString>> Option::attributeDependencies() const {
     auto base = FinancialProduct::attributeDependencies();
-    base.insert("Strike Price", {"Total"});
-    base.insert("Volatility", {"Total"});
+    base.insert("strikePrice", {"Total"});
+    base.insert("volatility", {"Total"});
     return base;
 } 

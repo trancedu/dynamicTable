@@ -33,22 +33,16 @@ void Swap::setNotional(double amount) {
 QHash<QString, QVariantList> Swap::attributes() const {
     auto base = FinancialProduct::attributes();
     
-    base.insert("Fixed Rate", QVariantList{
+    base.insert("fixedRate", QVariantList{
         m_fixedRate,
         QVariant::fromValue(QMetaType::Double),
-        0.0,
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
-            const_cast<Swap*>(this)->setFixedRate(v.toDouble());
-        }))
+        0.0
     });
     
-    base.insert("Notional", QVariantList{
+    base.insert("notional", QVariantList{
         m_notional,
         QVariant::fromValue(QMetaType::Double),
-        0.0,
-        QVariant::fromValue(std::function<void(QVariant)>([this](const QVariant& v) mutable {
-            const_cast<Swap*>(this)->setNotional(v.toDouble());
-        }))
+        0.0
     });
     
     return base;
@@ -56,7 +50,7 @@ QHash<QString, QVariantList> Swap::attributes() const {
 
 QHash<QString, QVector<QString>> Swap::attributeDependencies() const {
     auto base = FinancialProduct::attributeDependencies();
-    base.insert("Fixed Rate", {"Total"});
-    base.insert("Notional", {"Total"});
+    base.insert("fixedRate", {"Total"});
+    base.insert("notional", {"Total"});
     return base;
 } 

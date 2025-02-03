@@ -1,22 +1,26 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QTableView
+from PyQt6.QtWidgets import QApplication, QTableView, QMainWindow
 from financial_product import FinancialProduct
 from financial_product_model import FinancialProductModel
 
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.product = FinancialProduct("Bond", 100.0, 1000, "Corporate bond")
+        self.model = FinancialProductModel(self.product)
+        
+        # Setup UI
+        self.table_view = QTableView()
+        self.table_view.setModel(self.model)
+        self.setCentralWidget(self.table_view)
+        self.setWindowTitle("Financial Product Editor")
+        self.resize(600, 300)  # Wider to accommodate new columns
+        
+        # Connect error signal to status bar
+        self.model.error_occurred.connect(self.statusBar().showMessage)
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-
-    # Create an instance of your financial product.
-    product = FinancialProduct("Bond", 100.0, 1000, "Corporate bond")
-
-    # Create the model and pass the product to it.
-    model = FinancialProductModel(product)
-
-    # Create a QTableView and set its model.
-    table_view = QTableView()
-    table_view.setModel(model)
-    table_view.setWindowTitle("Financial Product Editor")
-    table_view.resize(400, 200)
-    table_view.show()
-
+    window = MainWindow()
+    window.show()
     sys.exit(app.exec())

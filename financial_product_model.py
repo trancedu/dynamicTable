@@ -1,7 +1,9 @@
-from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from financial_product import FinancialProduct
 
 class FinancialProductModel(QAbstractTableModel):
+    error_occurred = pyqtSignal(str)  # Add signal for error reporting
+
     def __init__(self, product: FinancialProduct, parent=None):
         super().__init__(parent)
         self.product = product
@@ -57,17 +59,16 @@ class FinancialProductModel(QAbstractTableModel):
         _, expected_type, default = self.attributes[key]
 
         try:
-            # Convert input value to correct type
             converted_value = expected_type(value)
-            
-            # Use property setters for validation
             setattr(self.product, key.lower(), converted_value)
-            
-            # Refresh the attributes data
             self.attributes = self.product.attributes
             self.dataChanged.emit(index, index, [role])
             return True
         except (ValueError, TypeError) as e:
+            self.error_occurred.emit(f"Validation error: {str(e)}")  # Emit error signal
+            return False
+        except Exception as e:
+            self.error_occurred.emit(f"Unexpected error: {str(e)}")
             return False
 
     def refresh_model(self):

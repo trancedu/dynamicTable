@@ -1,29 +1,30 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QTableView, QMainWindow
+from PyQt6.QtWidgets import QApplication, QTableView, QMainWindow, QPushButton, QVBoxLayout, QWidget
 from financial_product import FinancialProduct, Option, Swap
 from financial_product_model import FinancialProductModel
+from product_list_model import ProductListModel
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Create multiple products
-        self.products = [
-            Option(
-                "Put Option", 50.0, 100, "Equity option", 
-                _strike_price=120.0, _expiration="2024-12-31", _volatility=0.3
-            ),
-            Swap(
-                "Interest Rate Swap", 0.05, 1_000_000, "Fixed vs floating rate",
-                _fixed_rate=0.05, _notional=1_000_000
-            )
-        ]
-        
+        self.products = []  # This will be loaded from the database
+
         # Setup UI
         self.table_view = QTableView()
-        self.setCentralWidget(self.table_view)
+        self.save_button = QPushButton("Save")
+        self.save_button.clicked.connect(self.save_products)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.table_view)
+        layout.addWidget(self.save_button)
+
+        container = QWidget()
+        container.setLayout(layout)
+        self.setCentralWidget(container)
+
         self.setWindowTitle("Financial Products List")
         self.resize(600, 300)
-        
+
         # Show list view initially
         self.show_product_list()
         
@@ -32,8 +33,7 @@ class MainWindow(QMainWindow):
 
     def show_product_list(self):
         """Show the list of products with name and price"""
-        from product_list_model import ProductListModel  # Local import to avoid circular dependency
-        self.list_model = ProductListModel(self.products)
+        self.list_model = ProductListModel()
         self.table_view.setModel(self.list_model)
         self.table_view.setColumnWidth(0, 200)
         self.table_view.setColumnWidth(1, 100)
@@ -43,6 +43,10 @@ class MainWindow(QMainWindow):
         selected_product = self.products[index.row()]
         self.detail_window = ProductDetailWindow(selected_product)
         self.detail_window.show()
+
+    def save_products(self):
+        """Save products to the database."""
+        self.list_model.save_to_database()
 
 class ProductDetailWindow(QMainWindow):
     def __init__(self, product):

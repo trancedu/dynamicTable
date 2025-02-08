@@ -1,9 +1,10 @@
 from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex
+from database_operations import load_products, save_product
 
 class ProductListModel(QAbstractTableModel):
-    def __init__(self, products, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.products = products
+        self.products = load_products()
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.products)
@@ -19,9 +20,9 @@ class ProductListModel(QAbstractTableModel):
         
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             if index.column() == 0:
-                return product.name
+                return product['name']
             elif index.column() == 1:
-                return f"{product.price:.2f}"
+                return f"{product['price']:.2f}"
         return None
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
@@ -34,3 +35,8 @@ class ProductListModel(QAbstractTableModel):
         if index.isValid():
             flags |= Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
         return flags 
+
+    def save_to_database(self):
+        """Save all products to the database."""
+        for product in self.products:
+            save_product(product['name'], product['price']) 

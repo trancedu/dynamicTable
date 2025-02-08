@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QApplication, QTableView, QMainWindow, QPushButton, 
 from financial_product import FinancialProduct, Option, Swap
 from financial_product_model import FinancialProductModel
 from product_list_model import ProductListModel
-from database_operations import load_products
+from database_operations import load_products, save_products_to_db
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -49,8 +49,7 @@ class MainWindow(QMainWindow):
         self.detail_window.show()
 
     def save_products(self):
-        """Save products to the database."""
-        self.list_model.save_to_database()
+        save_products_to_db(self.products)
 
 class ProductDetailWindow(QMainWindow):
     def __init__(self, product):

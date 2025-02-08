@@ -78,4 +78,37 @@ def save_product(name, price):
         return False
     finally:
         cursor.close()
+        connection.close()
+
+def save_products_to_db(products):
+    """Save a list of products to the database."""
+    connection = create_connection()
+    if connection is None:
+        return False
+
+    cursor = connection.cursor()
+    try:
+        for product in products:
+            if isinstance(product, Option):
+                cursor.execute(
+                    "INSERT INTO options (name, price, strike_price, expiration, volatility) VALUES (%s, %s, %s, %s, %s)",
+                    (product.name, product.price, product.strike_price, product.expiration, product.volatility)
+                )
+            elif isinstance(product, Swap):
+                cursor.execute(
+                    "INSERT INTO swaps (name, price, fixed_rate, notional) VALUES (%s, %s, %s, %s)",
+                    (product.name, product.price, product.fixed_rate, product.notional)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO financial_products (name, price) VALUES (%s, %s)",
+                    (product.name, product.price)
+                )
+        connection.commit()
+        return True
+    except Error as e:
+        print(f"Error: {e}")
+        return False
+    finally:
+        cursor.close()
         connection.close() 

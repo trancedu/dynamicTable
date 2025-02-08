@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         self.table_view.setModel(self.list_model)
         self.table_view.setColumnWidth(0, 200)
         self.table_view.setColumnWidth(1, 100)
+        self.products = self.list_model.products  # Update self.products with the loaded products
 
     def show_product_details(self, index):
         """Show detailed view in a new window when a row is double-clicked"""

@@ -20,9 +20,9 @@ class ProductListModel(QAbstractTableModel):
         
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             if index.column() == 0:
-                return product['name']
+                return product.name
             elif index.column() == 1:
-                return f"{product['price']:.2f}"
+                return f"{product.price:.2f}"
         return None
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
@@ -39,4 +39,5 @@ class ProductListModel(QAbstractTableModel):
     def save_to_database(self):
         """Save all products to the database."""
         for product in self.products:
-            save_product(product['name'], product['price']) 
+            # Implement saving logic for each product type
+            pass 

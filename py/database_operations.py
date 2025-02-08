@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
+from financial_product import Option, Swap
 
 def create_connection():
     """Create a database connection."""
@@ -22,11 +23,43 @@ def load_products():
     if connection is None:
         return []
 
+    products = []
     cursor = connection.cursor(dictionary=True)
-    cursor.execute("SELECT name, price FROM financial_products")
-    products = cursor.fetchall()
-    cursor.close()
-    connection.close()
+
+    try:
+        # Load options
+        cursor.execute("SELECT * FROM options")
+        options = cursor.fetchall()
+        for option in options:
+            products.append(Option(
+                _name=option['name'],
+                _price=option['price'],
+                _quantity=0,  # Assuming quantity is not stored in the DB
+                _description="Option Product",
+                _strike_price=option['strike_price'],
+                _expiration=option['expiration'],
+                _volatility=option['volatility']
+            ))
+
+        # Load swaps
+        cursor.execute("SELECT * FROM swaps")
+        swaps = cursor.fetchall()
+        for swap in swaps:
+            products.append(Swap(
+                _name=swap['name'],
+                _price=swap['price'],
+                _quantity=0,  # Assuming quantity is not stored in the DB
+                _description="Swap Product",
+                _fixed_rate=swap['fixed_rate'],
+                _notional=swap['notional']
+            ))
+
+    except Error as e:
+        print(f"Error: {e}")
+    finally:
+        cursor.close()
+        connection.close()
+
     return products
 
 def save_product(name, price):

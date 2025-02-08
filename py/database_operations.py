@@ -18,7 +18,7 @@ def create_connection():
         return None
 
 def load_products():
-    """Load products from the database, including their IDs."""
+    """Load products from the database, including all properties."""
     connection = create_connection()
     if connection is None:
         return []
@@ -32,11 +32,11 @@ def load_products():
         options = cursor.fetchall()
         for option in options:
             products.append(Option(
-                _id=option['id'],  # Set ID
+                _id=option['id'],
                 _name=option['name'],
                 _price=option['price'],
-                _quantity=0,  # Assuming quantity is not stored in the DB
-                _description="Option Product",
+                _quantity=option['quantity'],
+                _description=option['description'],
                 _strike_price=option['strike_price'],
                 _expiration=option['expiration'],
                 _volatility=option['volatility']
@@ -47,11 +47,11 @@ def load_products():
         swaps = cursor.fetchall()
         for swap in swaps:
             products.append(Swap(
-                _id=swap['id'],  # Set ID
+                _id=swap['id'],
                 _name=swap['name'],
                 _price=swap['price'],
-                _quantity=0,  # Assuming quantity is not stored in the DB
-                _description="Swap Product",
+                _quantity=swap['quantity'],
+                _description=swap['description'],
                 _fixed_rate=swap['fixed_rate'],
                 _notional=swap['notional']
             ))
@@ -83,7 +83,7 @@ def save_product(name, price):
         connection.close()
 
 def save_products_to_db(products):
-    """Update a list of products in the database using their IDs and return success status and message."""
+    """Update a list of products in the database using their IDs and include all properties."""
     connection = create_connection()
     if connection is None:
         return False, "Failed to connect to the database."
@@ -94,18 +94,18 @@ def save_products_to_db(products):
             if isinstance(product, Option):
                 cursor.execute(
                     """
-                    UPDATE options SET price = %s, strike_price = %s, expiration = %s, volatility = %s
+                    UPDATE options SET price = %s, strike_price = %s, expiration = %s, volatility = %s, quantity = %s, description = %s
                     WHERE id = %s
                     """,
-                    (product.price, product.strike_price, product.expiration, product.volatility, product.id)
+                    (product.price, product.strike_price, product.expiration, product.volatility, product.quantity, product.description, product.id)
                 )
             elif isinstance(product, Swap):
                 cursor.execute(
                     """
-                    UPDATE swaps SET price = %s, fixed_rate = %s, notional = %s
+                    UPDATE swaps SET price = %s, fixed_rate = %s, notional = %s, quantity = %s, description = %s
                     WHERE id = %s
                     """,
-                    (product.price, product.fixed_rate, product.notional, product.id)
+                    (product.price, product.fixed_rate, product.notional, product.quantity, product.description, product.id)
                 )
             else:
                 cursor.execute(

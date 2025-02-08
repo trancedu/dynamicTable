@@ -83,10 +83,10 @@ def save_product(name, price):
         connection.close()
 
 def save_products_to_db(products):
-    """Update a list of products in the database using their IDs."""
+    """Update a list of products in the database using their IDs and return success status and message."""
     connection = create_connection()
     if connection is None:
-        return False
+        return False, "Failed to connect to the database."
 
     cursor = connection.cursor()
     try:
@@ -116,10 +116,9 @@ def save_products_to_db(products):
                     (product.price, product.id)
                 )
         connection.commit()
-        return True
+        return True, ""
     except Error as e:
-        print(f"Error: {e}")
-        return False
+        return False, str(e)
     finally:
         cursor.close()
         connection.close() 

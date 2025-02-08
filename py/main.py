@@ -80,7 +80,11 @@ class ProductDetailWindow(QMainWindow):
         self.model.status_message.connect(self.statusBar().showMessage)
 
     def save_product(self):
-        save_products_to_db([self.product])  # Save the specific product
+        success, message = save_products_to_db([self.product])
+        if success:
+            self.statusBar().showMessage("Product saved successfully.")
+        else:
+            self.statusBar().showMessage(f"Error saving product: {message}")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

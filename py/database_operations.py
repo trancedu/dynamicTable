@@ -18,7 +18,7 @@ def create_connection():
         return None
 
 def load_products():
-    """Load products from the database."""
+    """Load products from the database, including their IDs."""
     connection = create_connection()
     if connection is None:
         return []
@@ -32,6 +32,7 @@ def load_products():
         options = cursor.fetchall()
         for option in options:
             products.append(Option(
+                _id=option['id'],  # Set ID
                 _name=option['name'],
                 _price=option['price'],
                 _quantity=0,  # Assuming quantity is not stored in the DB
@@ -46,6 +47,7 @@ def load_products():
         swaps = cursor.fetchall()
         for swap in swaps:
             products.append(Swap(
+                _id=swap['id'],  # Set ID
                 _name=swap['name'],
                 _price=swap['price'],
                 _quantity=0,  # Assuming quantity is not stored in the DB
@@ -81,7 +83,7 @@ def save_product(name, price):
         connection.close()
 
 def save_products_to_db(products):
-    """Update a list of products in the database."""
+    """Update a list of products in the database using their IDs."""
     connection = create_connection()
     if connection is None:
         return False
@@ -93,25 +95,25 @@ def save_products_to_db(products):
                 cursor.execute(
                     """
                     UPDATE options SET price = %s, strike_price = %s, expiration = %s, volatility = %s
-                    WHERE name = %s
+                    WHERE id = %s
                     """,
-                    (product.price, product.strike_price, product.expiration, product.volatility, product.name)
+                    (product.price, product.strike_price, product.expiration, product.volatility, product.id)
                 )
             elif isinstance(product, Swap):
                 cursor.execute(
                     """
                     UPDATE swaps SET price = %s, fixed_rate = %s, notional = %s
-                    WHERE name = %s
+                    WHERE id = %s
                     """,
-                    (product.price, product.fixed_rate, product.notional, product.name)
+                    (product.price, product.fixed_rate, product.notional, product.id)
                 )
             else:
                 cursor.execute(
                     """
                     UPDATE financial_products SET price = %s
-                    WHERE name = %s
+                    WHERE id = %s
                     """,
-                    (product.price, product.name)
+                    (product.price, product.id)
                 )
         connection.commit()
         return True

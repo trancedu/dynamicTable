@@ -2,10 +2,21 @@ from dataclasses import dataclass
 
 @dataclass
 class FinancialProduct:
+    _id: int
     _name: str
     _price: float
     _quantity: int
     _description: str
+
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @id.setter
+    def id(self, value: int):
+        if value < 0:
+            raise ValueError("ID cannot be negative")
+        self._id = value
 
     @property
     def name(self) -> str:

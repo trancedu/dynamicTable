@@ -8,6 +8,24 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 
+# Update include paths to match actual connector structure
+include_directories(
+    /opt/homebrew/opt/mysql-connector-c++/include/cppconn  # Direct path to cppconn headers
+    /opt/homebrew/opt/mysql-connector-c++/include  # Base include
+    /opt/homebrew/opt/mysql-connector-c++/include/mysqlx  # For X DevAPI
+    /opt/homebrew/opt/mysql-connector-c++/include/jdbc  # For JDBC
+    /opt/homebrew/opt/openssl/include
+)
+
+link_directories(
+    /opt/homebrew/opt/mysql-connector-c++/lib
+    /opt/homebrew/opt/openssl/lib
+)
+
+# Add these definitions for MySQL connector
+add_definitions(-DMYSQLCLIENT_STATIC_LINKING)
+add_definitions(-DCPPCONN_PUBLIC_FUNC=)
+
 # Model files
 set(SOURCES
     FinancialProductModel.cpp
@@ -16,6 +34,7 @@ set(SOURCES
     Option.cpp
     Swap.cpp
     main.cpp
+    DatabaseOperations.cpp
 )
 
 set(HEADERS
@@ -24,6 +43,7 @@ set(HEADERS
     FinancialProduct.h
     Option.h
     Swap.h
+    DatabaseOperations.h
 )
 
 add_executable(FinancialProducts ${SOURCES} ${HEADERS})
@@ -31,4 +51,8 @@ add_executable(FinancialProducts ${SOURCES} ${HEADERS})
 target_link_libraries(FinancialProducts PRIVATE
     Qt6::Core
     Qt6::Widgets
+    mysqlcppconn
+    mysqlclient
+    ssl
+    crypto
 ) 

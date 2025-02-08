@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QApplication, QTableView, QMainWindow, QPushButton, 
 from financial_product import FinancialProduct, Option, Swap
 from financial_product_model import FinancialProductModel
 from product_list_model import ProductListModel
+from database_operations import load_products
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -33,11 +34,13 @@ class MainWindow(QMainWindow):
 
     def show_product_list(self):
         """Show the list of products with name and price"""
-        self.list_model = ProductListModel()
+        self.products = load_products()  # Assuming load_products is the function to fetch products
+        
+        # Pass products to ProductListModel
+        self.list_model = ProductListModel(self.products)
         self.table_view.setModel(self.list_model)
         self.table_view.setColumnWidth(0, 200)
         self.table_view.setColumnWidth(1, 100)
-        self.products = self.list_model.products  # Update self.products with the loaded products
 
     def show_product_details(self, index):
         """Show detailed view in a new window when a row is double-clicked"""

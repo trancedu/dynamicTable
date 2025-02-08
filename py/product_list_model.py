@@ -2,9 +2,9 @@ from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex
 from database_operations import load_products, save_product
 
 class ProductListModel(QAbstractTableModel):
-    def __init__(self, parent=None):
+    def __init__(self, products, parent=None):
         super().__init__(parent)
-        self.products = load_products()
+        self.products = products
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.products)

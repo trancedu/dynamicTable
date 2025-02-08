@@ -81,7 +81,7 @@ def save_product(name, price):
         connection.close()
 
 def save_products_to_db(products):
-    """Save a list of products to the database."""
+    """Update a list of products in the database."""
     connection = create_connection()
     if connection is None:
         return False
@@ -91,18 +91,27 @@ def save_products_to_db(products):
         for product in products:
             if isinstance(product, Option):
                 cursor.execute(
-                    "INSERT INTO options (name, price, strike_price, expiration, volatility) VALUES (%s, %s, %s, %s, %s)",
-                    (product.name, product.price, product.strike_price, product.expiration, product.volatility)
+                    """
+                    UPDATE options SET price = %s, strike_price = %s, expiration = %s, volatility = %s
+                    WHERE name = %s
+                    """,
+                    (product.price, product.strike_price, product.expiration, product.volatility, product.name)
                 )
             elif isinstance(product, Swap):
                 cursor.execute(
-                    "INSERT INTO swaps (name, price, fixed_rate, notional) VALUES (%s, %s, %s, %s)",
-                    (product.name, product.price, product.fixed_rate, product.notional)
+                    """
+                    UPDATE swaps SET price = %s, fixed_rate = %s, notional = %s
+                    WHERE name = %s
+                    """,
+                    (product.price, product.fixed_rate, product.notional, product.name)
                 )
             else:
                 cursor.execute(
-                    "INSERT INTO financial_products (name, price) VALUES (%s, %s)",
-                    (product.name, product.price)
+                    """
+                    UPDATE financial_products SET price = %s
+                    WHERE name = %s
+                    """,
+                    (product.price, product.name)
                 )
         connection.commit()
         return True

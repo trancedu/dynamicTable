@@ -64,8 +64,23 @@ class ProductDetailWindow(QMainWindow):
         self.setWindowTitle(f"Product Details - {self.product.name}")
         self.resize(600, 300)
         
+        # Add save button
+        self.save_button = QPushButton("Save")
+        self.save_button.clicked.connect(self.save_product)
+        
+        # Layout
+        layout = QVBoxLayout()
+        layout.addWidget(self.table_view)
+        layout.addWidget(self.save_button)
+        container = QWidget()
+        container.setLayout(layout)
+        self.setCentralWidget(container)
+        
         # Connect error signal to status bar
         self.model.status_message.connect(self.statusBar().showMessage)
+
+    def save_product(self):
+        save_products_to_db([self.product])  # Save the specific product
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
